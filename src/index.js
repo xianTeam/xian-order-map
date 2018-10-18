@@ -143,12 +143,13 @@ class OrderMap extends Component {
 
     render() {
         const { className, style } = this.props
+        style.width = '100%'
+        style.height = '100%'
         return(
             <div 
                 ref={div => this.mapContainer = div}
-                style={{ width: '100%', height: '100%', minHeight: 700 }}
-                // style={{ width: '100%', height: '100%', ...style }}
-                // {...{ className }}
+                style={style}
+                className={className}
             />
         )
     }
