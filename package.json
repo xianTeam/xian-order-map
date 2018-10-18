@@ -1,6 +1,6 @@
 {
   "name": "xian-order-map",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "鲜盒子订单地图",
   "main": "dist/bundle.js",
   "files": [
