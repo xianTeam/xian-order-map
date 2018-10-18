@@ -252,12 +252,14 @@ var OrderMap = function (_Component) {
                 className = _props2.className,
                 style = _props2.style;
 
+            style.width = '100%';
+            style.height = '100%';
             return _react2.default.createElement('div', {
                 ref: function ref(div) {
                     return _this5.mapContainer = div;
                 },
-                style: { width: '100%', height: '100%', minHeight: 700 }
-                // {...{ className }}
+                style: style,
+                className: className
             });
         }
     }]);
