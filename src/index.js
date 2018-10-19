@@ -5,6 +5,7 @@ import { INITIALOPTIONS } from './config'
 
 let qq = window.qq = window.qq || {};
 qq.maps = qq.maps || {};
+   
 
 class OrderMap extends Component {
     constructor() {
@@ -39,15 +40,44 @@ class OrderMap extends Component {
     _initMap() {
         const { initialOptions, orderList, boxInfo } = this.props
         const options = Object.assign({}, INITIALOPTIONS, initialOptions)
-        const center = new qq.maps.LatLng(boxInfo.lat, boxInfo.lng)
-
+        const lat = Number(boxInfo.lat)
+        const lng = Number(boxInfo.lng)
+        const center = new qq.maps.LatLng(lat, lng)
+        const sw = new qq.maps.LatLng(lat + .2, lng + .2) //东北角坐标
+        const ne = new qq.maps.LatLng(lat - .2, lng - .2) //西南角坐标
+        const latlngBounds = new qq.maps.LatLngBounds(ne, sw)
+        
         options.center = center
+        options.boundary = latlngBounds
+        options.zoomControlOptions = {                   
+            style: qq.maps.ZoomControlStyle.SMALL,
+            position: qq.maps.ControlPosition.RIGHT_BOTTOM
+        }
+        options.panControlOptions = {
+            position: qq.maps.ControlPosition.RIGHT_BOTTOM
+        }
         this.map = new qq.maps.Map(this.mapContainer, options)
         qq.maps.event.addListener(this.map, 'click', (e) => {
             this.infoWindow && this.infoWindow.close()
         })
+        this._addPolygon(lat, lng)
         this._addXianMarker(boxInfo)
         orderList && this._addOrderMarker(orderList, boxInfo)
+    }
+
+    // 创建边框范围覆盖
+    _addPolygon(lat, lng) {
+        const path = [
+            new qq.maps.LatLng(lat + .2, lng + .2),
+            new qq.maps.LatLng(lat + .2, lng - .2),
+            new qq.maps.LatLng(lat - .2, lng - .2),
+            new qq.maps.LatLng(lat - .2, lng + .2)
+        ]
+        new qq.maps.Polygon({
+            path,
+            map: this.map,
+            fillColor: new qq.maps.Color(0, 0, 0, 0.05),
+        })
     }
 
     // 创建鲜库标记
@@ -101,7 +131,7 @@ class OrderMap extends Component {
                 position,
                 map: this.map,
                 decoration,
-                draggable: true,
+                // draggable: true,
                 animation: qq.maps.MarkerAnimation.DROP,
             })
 
@@ -130,7 +160,7 @@ class OrderMap extends Component {
                             </tr>
                             <tr>
                                 <td width="30%">配送时间</td>
-                                <td>${!sendTime ? '即时配送' : sendDay == 'presale' ? `预售${sendTime}送达` : sendTime}</td>
+                                <td>${!sendTime ? '即时配送' : sendDay == 'presale' ? `预售${sendTime}送达` : sendTime.replace('T', ' ')}</td>
                             </tr>
                         </table>
                     </div>`
